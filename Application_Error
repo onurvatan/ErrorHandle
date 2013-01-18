@@ -1,0 +1,29 @@
+ protected void Application_Error()
+        {
+            var exception = Server.GetLastError();
+            HttpException httpException = exception as HttpException;
+           
+
+     //     string IP = Request.ServerVariables["REMOTE_ADDR"].ToString();
+            string IP = Request.UserHostAddress;
+            string page = Request.Url.AbsoluteUri;
+
+            Error_Log Log = new Error_Log
+            {
+                IP = IP,
+                Page = page,
+                ErrorCode = httpException.GetHttpCode(),
+                Message = httpException.Message,
+                InnerExceptionMessage = httpException.InnerException!=null ? httpException.InnerException.Message:null
+            };
+
+            ErrorManager.SaveError(Log);
+
+            Response.Clear();
+            Server.ClearError();
+            Response.Redirect("/");
+
+
+
+
+        }
